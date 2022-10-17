@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 
-import { Paper, Tooltip } from '@mui/material';
+import { Paper } from '@mui/material';
 import {
   Grid,
   Table,
+  VirtualTable,
   TableHeaderRow,
   PagingPanel,
   TableFilterRow,
-  TableColumnResizing,
+  TableFixedColumns,
   SearchPanel,
   Toolbar,
 } from '@devexpress/dx-react-grid-material-ui';
@@ -18,25 +19,12 @@ import {
   IntegratedSorting,
   IntegratedPaging,
   PagingState,
-  DataTypeProvider,
   SearchState,
 } from '@devexpress/dx-react-grid';
 
-import { MockApi } from '../api/table';
+import { MockApi } from '../api/users';
 
-const TooltipFormatter = ({ row: { birthday }, value }) => (
-  <Tooltip title={<span>{`birth date: ${birthday}`}</span>}>
-    <span>{value}</span>
-  </Tooltip>
-);
-
-const CellTooltip = (props) => (
-  <DataTypeProvider
-    for={['age']}
-    formatterComponent={TooltipFormatter}
-    {...props}
-  />
-);
+const Root = (props) => <Grid.Root {...props} style={{ height: '100%' }} />;
 
 export const ReactGrid = () => {
   const [users, setUsers] = useState([]);
@@ -45,23 +33,28 @@ export const ReactGrid = () => {
   const [pageSize, setPageSize] = useState(5);
   const [filters, setFilters] = useState([]);
   const [searchValue, setSearchState] = useState('');
-  const [columnWidths] = useState([
-    { columnName: 'id', width: '15%' },
-    { columnName: 'name', width: '35%' },
-    { columnName: 'surname', width: '35%' },
-    { columnName: 'age', width: '15%' },
-  ]);
   const [sorting, setSorting] = useState([
     { columnName: 'id', direction: 'asc' },
   ]);
+  const [tableColumnExtensions] = useState([
+    { columnName: 'id' },
+    { columnName: 'name' },
+    { columnName: 'surname' },
+    { columnName: 'age' },
+  ]);
+  const leftColumns = ['name', 'surname'];
 
-  const getAge = (birthDate) =>
-    Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e10);
+  const dateToShort = (birthDate) =>
+    new Date(birthDate).toLocaleDateString([], {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
 
   useEffect(() => {
     MockApi.getUsers().then(({ data }) => {
       const formatData = Object.values(data).map((user) => {
-        if (user['birthday']) user['age'] = getAge(user['birthday']);
+        if (user['birthday']) user['birthday'] = dateToShort(user['birthday']);
         return user;
       });
       setUsers(Object.values(formatData));
@@ -70,17 +63,17 @@ export const ReactGrid = () => {
 
   const configColumns = useMemo(
     () => [
-      { name: 'id', title: 'Id' },
       { name: 'name', title: 'Name' },
       { name: 'surname', title: 'Surname' },
-      { name: 'age', title: 'Age' },
+      { name: 'birthday', title: 'Birthday' },
+      { name: 'avatar', title: 'Avatar' },
     ],
     []
   );
 
   return (
-    <Paper>
-      <Grid rows={users} columns={configColumns}>
+    <Paper sx={{ height: 'calc(100vh - 100px - 30px)' }}>
+      <Grid rows={users} columns={configColumns} rootComponent={Root}>
         <FilteringState filters={filters} onFiltersChange={setFilters} />
         <SearchState value={searchValue} onValueChange={setSearchState} />
         <SortingState sorting={sorting} onSortingChange={setSorting} />
@@ -93,15 +86,12 @@ export const ReactGrid = () => {
         <IntegratedFiltering />
         <IntegratedSorting />
         <IntegratedPaging />
-        <CellTooltip columns={configColumns} />
         <Table />
-        <TableColumnResizing
-          defaultColumnWidths={columnWidths}
-          resizingMode={'nextColumn'}
-        />
+        <VirtualTable columnExtensions={tableColumnExtensions} height="auto" />
         <TableHeaderRow showSortingControls />
         <PagingPanel pageSizes={pageSizes} />
         <TableFilterRow />
+        <TableFixedColumns leftColumns={leftColumns} />
         <Toolbar />
         <SearchPanel />
       </Grid>
