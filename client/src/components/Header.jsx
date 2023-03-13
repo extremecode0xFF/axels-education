@@ -1,11 +1,10 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { AppBar, Container, styled } from "@mui/material";
 
-import { Link } from 'react-router-dom';
-import { AppBar, Container, styled } from '@mui/material';
-
-const Image = styled('img')({
-  width: '100px',
-  cursor: 'pointer',
+const Image = styled("img")({
+  width: "100px",
+  cursor: "pointer",
 });
 
 export const Header = () => {
@@ -13,9 +12,9 @@ export const Header = () => {
     <AppBar position="fixed">
       <Container
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Link to="/">

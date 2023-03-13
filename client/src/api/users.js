@@ -1,5 +1,5 @@
 export class MockApi {
-  static #url = 'https://mock-api.shpp.me/axels/users';
+  static #url = "https://mock-api.shpp.me/axels/users";
 
   static async getUsers() {
     try {

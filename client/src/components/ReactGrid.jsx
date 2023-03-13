@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-
-import { Paper } from '@mui/material';
+import React, { useEffect, useState, useMemo } from "react";
+import { Paper } from "@mui/material";
 import {
   Grid,
   Table,
@@ -11,7 +10,7 @@ import {
   TableFixedColumns,
   SearchPanel,
   Toolbar,
-} from '@devexpress/dx-react-grid-material-ui';
+} from "@devexpress/dx-react-grid-material-ui";
 import {
   FilteringState,
   IntegratedFiltering,
@@ -20,11 +19,11 @@ import {
   IntegratedPaging,
   PagingState,
   SearchState,
-} from '@devexpress/dx-react-grid';
+} from "@devexpress/dx-react-grid";
 
-import { MockApi } from '../api/users';
+import { MockApi } from "../api/users";
 
-const Root = (props) => <Grid.Root {...props} style={{ height: '100%' }} />;
+const Root = (props) => <Grid.Root {...props} style={{ height: "100%" }} />;
 
 export const ReactGrid = () => {
   const [users, setUsers] = useState([]);
@@ -32,29 +31,29 @@ export const ReactGrid = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const [filters, setFilters] = useState([]);
-  const [searchValue, setSearchState] = useState('');
+  const [searchValue, setSearchState] = useState("");
   const [sorting, setSorting] = useState([
-    { columnName: 'id', direction: 'asc' },
+    { columnName: "id", direction: "asc" },
   ]);
   const [tableColumnExtensions] = useState([
-    { columnName: 'id' },
-    { columnName: 'name' },
-    { columnName: 'surname' },
-    { columnName: 'age' },
+    { columnName: "id" },
+    { columnName: "name" },
+    { columnName: "surname" },
+    { columnName: "age" },
   ]);
-  const leftColumns = ['name', 'surname'];
+  const leftColumns = ["name", "surname"];
 
   const dateToShort = (birthDate) =>
     new Date(birthDate).toLocaleDateString([], {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
     });
 
   useEffect(() => {
     MockApi.getUsers().then(({ data }) => {
       const formatData = Object.values(data).map((user) => {
-        if (user['birthday']) user['birthday'] = dateToShort(user['birthday']);
+        if (user["birthday"]) user["birthday"] = dateToShort(user["birthday"]);
         return user;
       });
       setUsers(Object.values(formatData));
@@ -63,16 +62,16 @@ export const ReactGrid = () => {
 
   const configColumns = useMemo(
     () => [
-      { name: 'name', title: 'Name' },
-      { name: 'surname', title: 'Surname' },
-      { name: 'birthday', title: 'Birthday' },
-      { name: 'avatar', title: 'Avatar' },
+      { name: "name", title: "Name" },
+      { name: "surname", title: "Surname" },
+      { name: "birthday", title: "Birthday" },
+      { name: "avatar", title: "Avatar" },
     ],
     []
   );
 
   return (
-    <Paper sx={{ height: 'calc(100vh - 100px - 30px)' }}>
+    <Paper sx={{ height: "calc(100vh - 100px - 30px)" }}>
       <Grid rows={users} columns={configColumns} rootComponent={Root}>
         <FilteringState filters={filters} onFiltersChange={setFilters} />
         <SearchState value={searchValue} onValueChange={setSearchState} />
